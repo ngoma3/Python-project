@@ -3,6 +3,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.forms import UserCreationForm
 from .forms import RegisterUserForm
+from reportlab.pdfgen import canvas
 
 def login_user(request):
 	if request.method == "POST":
