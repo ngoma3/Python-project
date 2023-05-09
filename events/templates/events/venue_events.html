@@ -1,11 +1,11 @@
-{% extends 'events/base.html' %}
+{% extends 'events/base.html' %} {% block content %}
+<br><br>
+<div class="card container" style="width: 80%;">
+    <div class="card-body">
+        <h1>List Events</h1>
 
-{% block content %}
-	
-<h1>List Events</h1>
-
-{% for event in events %}
- <a href="{% url 'show-event' event.id %}">{{ event}}</a><br/>
-{% endfor %}
-	
+        {% for event in events %}
+        <a href="{% url 'show-event' event.id %}">{{ event}}</a><br/> {% endfor %}
+    </div>
+</div>
 {% endblock %}

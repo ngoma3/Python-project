@@ -1,34 +1,26 @@
-{% extends 'events/base.html' %}
+{% extends 'events/base.html' %} {% block content %}
+<br><br>
+<div class="card container" style="width: 80%;">
+    <div class="card-body">
 
-{% block content %}
 
-{% if user.is_authenticated %}
-	<h1>Add Event</h1>
-<br/><br/>
+        {% if user.is_authenticated %}
+        <h1>Add Event</h1>
+        <br/><br/> {% if submitted %} Your Event Was Submitted Succefully!!! {% else %}
 
-{% if submitted %}
-		Your Event Was Submitted Succefully!!!
+        <form action="" method=POST>
+            {% csrf_token %} {{ form.as_p }}
 
-	{% else %}
+            <input type="submit" value="Submit" class="btn btn-secondary">
 
-		<form action="" method=POST>
-			{% csrf_token %}
+        </form>
+        {% endif %}
 
-			{{ form.as_p }}
+        <br/><br/> {% else %}
+        <h1>Sorry! You Must Be Logged In To View This Page...</h1>
 
-			<input type="submit" value="Submit" class="btn btn-secondary">
-
-		</form>
-		{% endif %}
-
-<br/><br/>	
-
-{% else %}
-<h1>Sorry! You Must Be Logged In To View This Page...</h1>
-
-<a href="{% url 'login' %}">Login Here</a>
-
-{% endif %}
-
+        <a href="{% url 'login' %}">Login Here</a> {% endif %}
+    </div>
+</div>
 
 {% endblock %}
