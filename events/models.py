@@ -34,6 +34,7 @@ class Event(models.Model):
 	description = models.TextField(blank=True)
 	attendees = models.ManyToManyField(MyClubUser, blank=True)
 	approved = models.BooleanField('Aprroved', default=False)
+	file = models.FileField(null=True, blank=True, upload_to='pdfs/')
 
 	def __str__(self):
 		return self.name

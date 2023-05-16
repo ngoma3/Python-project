@@ -19,8 +19,13 @@
                     <li>Description: {{ event.description }}</li>
                     <li>Approved: {{ event.approved }}</li>
                     <li>Attendees:<br/> {% for user in event.attendees.all %} {{ user }}<br/> {% endfor %}
-
                     </li>
+                    {% for pdf in pdf_list %}
+                    <li>{{ pdf.title }} - <a href="{% url 'pdf_download' pdf.id %}" download>Download</a></li>
+                    {% empty %}
+                    <li>No PDFs found.</li>
+                    {% endfor %}
+
                 </ul>
 
 

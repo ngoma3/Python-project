@@ -1,4 +1,4 @@
-{% extends 'events/base.html' %} {% block content %}
+{% extends 'events/base.html' %}{% block content %}
 <br><br>
 <div class="container d-flex flex-row justify-content-between">
     <div class="card" style="width: 60%;">
@@ -17,12 +17,14 @@
                         <p class="card-text">
                             <ul>
                                 <li>Date: {{ event.event_date }}</li>
-
                                 <li>Venue Website: {{ event.venue.web }}</li>
                                 <li>Manager: {{ event.manager }}</li>
                                 <li>Description: {{ event.description }}</li>
                                 <li>Attendees:<br/> {% for user in event.attendees.all %} {{ user }}<br/> {% endfor %}
                                 </li>
+                                {% if event.file %}
+                                <li>Attached file - <a href="{{ event.file.url }}" download>Download {{ event.file.name }} ({{ event.file.name|slice:"4"|upper }})</a></li>
+                                {% endif %}
                             </ul>
 
 
@@ -47,8 +49,19 @@
             </div>
         </div>
     </div>
+    {% if user.is_authenticated %}
+    <div class="card" style="width: 30%; height: 20rem;">
+        <div class="card-body">
+            <h4 class="card-title">Hello {{user.last_name}} ,Events For {{ month }} {{ year }}</h4>
+            As of {{ time }}
 
-    <div class="card" style="width: 30%;">
+            <p class="card-text">{{ cal|safe }}</p>
+
+
+        </div>
+    </div>
+    {% elif not user.is_authenticated %}
+    <div class="card" style="width: 30%; height: 20rem;">
         <div class="card-body">
             <h4 class="card-title">Events For {{ month }} {{ year }}</h4>
             As of {{ time }}
@@ -57,6 +70,7 @@
 
         </div>
     </div>
+    {% endif %}
 </div>
 
 

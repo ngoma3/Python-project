@@ -6,7 +6,7 @@ from django.http import HttpResponseRedirect
 from .models import Event, Venue
 # Import User Model From Django
 from django.contrib.auth.models import User
-from .forms import VenueForm, EventForm, EventFormAdmin
+from .forms import VenueForm, EventForm, EventFormAdmin 
 from django.http import HttpResponse
 import csv
 from django.contrib import messages
@@ -83,8 +83,6 @@ def admin_approval(request):
 		messages.success(request, ("You aren't authorized to view this page!"))
 		return redirect('home')
 
-
-	return render(request, 'events/admin_approval.html')
 
 # Create My Events Page
 def my_events(request):
@@ -212,12 +210,17 @@ def add_event(request):
 	submitted = False
 	if request.method == "POST":
 		if request.user.is_superuser:
-			form = EventFormAdmin(request.POST)
+			form = EventFormAdmin(request.POST, request.FILES)
 			if form.is_valid():
-					form.save()
-					return 	HttpResponseRedirect('/add_event?submitted=True')	
+				event = form.save(commit=False)
+				event.manager = request.user
+				# files = request.FILES.getlist('files')
+				# for file in files:
+				# 	event.files = file
+				event.save()
+				return 	HttpResponseRedirect('/add_event?submitted=True')	
 		else:
-			form = EventForm(request.POST)
+			form = EventForm(request.POST, request.FILES)
 			if form.is_valid():
 				#form.save()
 				event = form.save(commit=False)
@@ -320,6 +323,12 @@ def list_venues(request):
 		'venues': venues,
 		'nums':nums}
 		)
+def pdf_download(request, pdf_id):
+    pdf = Event.objects.get(pk=pdf_id)
+    file = open(pdf.file.path, 'rb')
+    response = FileResponse(file, as_attachment=True)
+    response['Content-Disposition'] = f'attachment; filename="{pdf.title}.pdf"'
+    return response
 
 def add_venue(request):
 	submitted = False

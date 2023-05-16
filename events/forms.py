@@ -6,14 +6,15 @@ from .models import Venue, Event
 class EventFormAdmin(ModelForm):
 	class Meta:
 		model = Event
-		fields = ('name', 'event_date', 'venue', 'manager', 'attendees', 'description')
+		fields = ('name', 'event_date', 'venue', 'manager', 'attendees', 'description','file')
 		labels = {
 			'name': '',
 			'event_date': 'YYYY-MM-DD HH:MM:SS',
 			'venue': 'Venue',
 			'manager': 'Manager',
 			'attendees': 'Attendees',
-			'description': '',			
+			'description': '',
+			'file': '',				
 		}
 		widgets = {
 			'name': forms.TextInput(attrs={'class':'form-control', 'placeholder':'Event Name'}),
@@ -28,13 +29,14 @@ class EventFormAdmin(ModelForm):
 class EventForm(ModelForm):
 	class Meta:
 		model = Event
-		fields = ('name', 'event_date', 'venue', 'attendees', 'description')
+		fields = ('name', 'event_date', 'venue', 'attendees', 'description','file')
 		labels = {
 			'name': '',
 			'event_date': 'YYYY-MM-DD HH:MM:SS',
 			'venue': 'Venue',
 			'attendees': 'Attendees',
-			'description': '',			
+			'description': '',	
+			'file': '',		
 		}
 		widgets = {
 			'name': forms.TextInput(attrs={'class':'form-control', 'placeholder':'Event Name'}),
