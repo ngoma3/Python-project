@@ -23,8 +23,7 @@
                                 <li>Attendees:<br/> {% for user in event.attendees.all %} {{ user }}<br/> {% endfor %}
                                 </li>
                                 {% if event.file %}
-                                <li>Attached file - <a href="{{ event.file.url }}" download>Download {{ event.file.name }} ({{ event.file.name|slice:"4"|upper }})</a></li>
-                                {% endif %}
+                                <li>Attached file - <a href="{{ event.file.url }}"> {{event.file.name|slice:"4:" }} </a><a href="{{ event.file.url }}" class="btn btn-outline-dark mx-3" download>Download </a> </li>{% endif %}
                             </ul>
 
 
@@ -50,25 +49,65 @@
         </div>
     </div>
     {% if user.is_authenticated %}
-    <div class="card" style="width: 30%; height: 20rem;">
-        <div class="card-body">
-            <h4 class="card-title">Hello {{user.last_name}} ,Events For {{ month }} {{ year }}</h4>
-            As of {{ time }}
+    <div class=" d-flex flex-column justify-content-between" style="width: 30%; height: 20rem;">
+        <div class="card">
+            <div class="card-body">
+                {% if time %}
+                <h4 class="card-title">Hello {{user.last_name}} ,Events For {{ month }} {{ year }}</h4>
+                As of {{ time }}
+                <p class="card-text">{{ cal|safe }}</p>
+                {% elif date %}
+                <h4 class="card-title">Events On {{date}}</h4>
+                {% else%}
+                <h4 class="card-title">Events For {{ month }}/ {{ year }}</h4>
+                {% endif %}
 
-            <p class="card-text">{{ cal|safe }}</p>
 
 
+
+            </div>
         </div>
+        <div class="card mt-3">
+            <form method=POST class="d-flex">
+                <span class="d-inline form-control form-control-sm">{% csrf_token %} {{ form.as_p }}</span>
+                <button type="submit" class="d-inline h-3 btn btn-dark">search</button>
+            </form>
+        </div>
+        <div class="card mt-3">
+            <form method=POST class="d-flex">
+                <span class="d-inline form-control form-control-sm">{% csrf_token %} {{ form2.as_p }}</span>
+
+                <button type="submit" class="d-inline h-3 btn btn-dark">search</button>
+            </form>
+        </div>
+
     </div>
     {% elif not user.is_authenticated %}
-    <div class="card" style="width: 30%; height: 20rem;">
-        <div class="card-body">
-            <h4 class="card-title">Events For {{ month }} {{ year }}</h4>
-            As of {{ time }}
+    <div class=" d-flex flex-column justify-content-between " style="width: 30%; height: 20rem;">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Events For {{ month }} {{ year }}</h4>
+                As of {{ time }}
 
-            <p class="card-text">{{ cal|safe }}</p>
+                <p class="card-text">{{ cal|safe }}</p>
 
+            </div>
         </div>
+        <div class="card mt-3">
+            <form method=POST class="d-flex">
+                <span class="d-inline form-control form-control-sm">{% csrf_token %} {{ form.as_p }}</span>
+
+                <button type="submit" class="d-inline h-3 btn btn-dark">search</button>
+            </form>
+        </div>
+        <div class="card mt-3">
+            <form method=POST class="d-flex">
+                <span class="d-inline form-control form-control-sm">{% csrf_token %} {{ form2.as_p }}</span>
+
+                <button type="submit" class="d-inline h-3 btn btn-dark">search</button>
+            </form>
+        </div>
+
     </div>
     {% endif %}
 </div>

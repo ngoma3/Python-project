@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from datetime import date
+from typing import Optional
 
 class Venue(models.Model):
 	name = models.CharField('Venue Name', max_length=120)
@@ -15,7 +16,29 @@ class Venue(models.Model):
 	def __str__(self):
 		return self.name
 
-
+class Mdate(models.Model):
+	date_field = models.DateTimeField('Filter By Date')
+	def __str__(self):
+		return self.date_field
+class Mdate2(models.Model):
+    
+    month_field= models.CharField(max_length=20, choices=  [
+        ('1', 'January'),
+        ('2', 'February'),
+        ('3', 'March'),
+		('4', 'April'),
+        ('5', 'May'),
+        ('6', 'June'),
+		('7', 'July'),
+        ('8', 'August'),
+        ('9', 'September'),
+		('10', 'October'),
+        ('11', 'November'),
+        ('12', 'December'),
+    	]) 
+    def __str__(self):
+	    return self.month_field
+		
 class MyClubUser(models.Model):
 	first_name = models.CharField(max_length=30)
 	last_name = models.CharField(max_length=30)
@@ -29,7 +52,7 @@ class Event(models.Model):
 	name = models.CharField('Event Name', max_length=120)
 	event_date = models.DateTimeField('Event Date')
 	venue = models.ForeignKey(Venue, blank=True, null=True, on_delete=models.CASCADE)
-	#venue = models.CharField(max_length=120)
+	# venue = models.CharField(max_length=120)
 	manager = models.ForeignKey(User, blank=True, null=True, on_delete=models.SET_NULL)
 	description = models.TextField(blank=True)
 	attendees = models.ManyToManyField(MyClubUser, blank=True)

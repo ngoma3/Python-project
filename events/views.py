@@ -6,7 +6,7 @@ from django.http import HttpResponseRedirect
 from .models import Event, Venue
 # Import User Model From Django
 from django.contrib.auth.models import User
-from .forms import VenueForm, EventForm, EventFormAdmin 
+from .forms import VenueForm, EventForm, EventFormAdmin, MyForm, MyForm2, Search
 from django.http import HttpResponse
 import csv
 from django.contrib import messages
@@ -17,11 +17,38 @@ import io
 from reportlab.pdfgen import canvas
 from reportlab.lib.units import inch
 from reportlab.lib.pagesizes import letter
+from django.db.models import Q
 
 # Import Pagination Stuff
 from django.core.paginator import Paginator
 
-
+# def specific(request):
+# 	if request.method == "POST":
+# 		form = MyForm(request.POST)
+# 		if form.is_valid():
+# 			field_date = form.cleaned_data['date_field']
+# 			# create a calendar
+# 			cal = HTMLCalendar().formatmonth(
+# 				field_date,
+# 				)
+# 			# Get current year
+# 			now = datetime.now()
+# 			current_year = now.year
+# 			# Query the Events Model For Dates
+# 			event_list = Event.objects.filter(
+# 				event_date__year = field_date.year,
+# 				event_date__month = field_date.month
+# 				)
+# 			return render(request, 
+# 				'events/home.html', {
+# 				"year": field_date.year,
+# 				"month": field_date.month,
+# 				"cal": cal,
+# 				"current_year": current_year,
+# 				"event_list": event_list,
+# 				"form": form
+# 				})
+			
 # Show Event
 def show_event(request, event_id):
 	event = Event.objects.get(pk=event_id)
@@ -284,17 +311,29 @@ def search_venues(request):
 
 def search_events(request):
 	if request.method == "POST":
-		searched = request.POST['searched']
-		events = Event.objects.filter(description__contains=searched)
-	
-		return render(request, 
-		'events/search_events.html', 
-		{'searched':searched,
-		'events':events})
+		form3 = Search(request.POST)
+		if form3.is_valid():
+			field_data = form3.cleaned_data['name']
+			# events = Event.objects.filter(name__contains=searched)
+			events = Event.objects.filter(
+				Q(name__contains=field_data) |  # filter by field1 contains searched term
+				Q(description__contains=field_data)  # filter by field2 contains searched term (case-insensitive)
+				)
+			return render(request, 
+			'events/search_events.html', 
+			{'searched':events,
+			'events':events,
+			'form3': form3
+			})
+		else:
+			return render(request, 
+			'events/search_events.html', 
+			{'form3': form3})
 	else:
+		form3 = Search
 		return render(request, 
 		'events/search_events.html', 
-		{})
+		{'form3': form3})
 
 
 def show_venue(request, venue_id):
@@ -323,12 +362,7 @@ def list_venues(request):
 		'venues': venues,
 		'nums':nums}
 		)
-def pdf_download(request, pdf_id):
-    pdf = Event.objects.get(pk=pdf_id)
-    file = open(pdf.file.path, 'rb')
-    response = FileResponse(file, as_attachment=True)
-    response['Content-Disposition'] = f'attachment; filename="{pdf.title}.pdf"'
-    return response
+
 
 def add_venue(request):
 	submitted = False
@@ -353,8 +387,54 @@ def all_events(request):
 		{'event_list': event_list})
 
 
-def home(request, year=datetime.now().year, month=datetime.now().strftime('%B')):
-	name = "John"
+def home(request, year=datetime.now().year, month=datetime.now().strftime('%B') ):
+	if request.method == "POST":
+		form = MyForm(request.POST)
+		formtwo = MyForm2(request.POST)
+		if form.is_valid():
+			field_date = form.cleaned_data['date_field']
+			# Get current year
+			now = datetime.now()
+			current_year = now.year
+			# Query the Events Model For Dates
+			event_list = Event.objects.filter(
+				event_date__year = field_date.year,
+				event_date__month = field_date.month,
+				event_date__day = field_date.day
+				)
+			return render(request, 
+				'events/home.html', {
+				"year": field_date.year,
+				"month": field_date.month,
+				"cal": cal,
+				"date": field_date,
+				"current_year": current_year,
+				"event_list": event_list,
+				"form": form,
+				"form2": formtwo
+				})
+		elif formtwo.is_valid():
+			field_data = formtwo.cleaned_data['month_field']
+			# create a calendar
+			# Get current year
+			now = datetime.now()
+			current_year = now.year
+			# Query the Events Model For Dates
+			event_list = Event.objects.filter(
+				event_date__year = year,
+				event_date__month = field_data,
+				)
+			return render(request, 
+				'events/home.html', {
+				"year": year,
+				"month": field_data,
+				"current_year": current_year,
+				"event_list": event_list,
+				"form": form,
+				"form2": formtwo
+				})
+	form = MyForm
+	formtwo = MyForm2
 	month = month.capitalize()
 	# Convert month from name to number
 	month_number = list(calendar.month_name).index(month)
@@ -376,9 +456,25 @@ def home(request, year=datetime.now().year, month=datetime.now().strftime('%B'))
 
 	# Get current time
 	time = now.strftime('%I:%M %p')
+	# if spdate:
+	# 	event_list = Event.objects.filter(
+	# 		event_date = spdate,
+	# 		)
+	# 	return render(request, 
+	# 		'events/home.html', {
+	# 		"name": name,
+	# 		"year": year,
+	# 		"month": month,
+	# 		"month_number": month_number,
+	# 		"cal": cal,
+	# 		"current_year": current_year,
+	# 		"time":time,
+	# 		"event_list": event_list,
+	# 		"form": form
+	# 		})
+	
 	return render(request, 
 		'events/home.html', {
-		"name": name,
 		"year": year,
 		"month": month,
 		"month_number": month_number,
@@ -386,6 +482,8 @@ def home(request, year=datetime.now().year, month=datetime.now().strftime('%B'))
 		"current_year": current_year,
 		"time":time,
 		"event_list": event_list,
+		"form": form,
+		"form2": formtwo
 		})
 
 

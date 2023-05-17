@@ -1,8 +1,13 @@
 from django import forms
 from django.forms import ModelForm
-from .models import Venue, Event
+from .models import Venue, Event, Mdate, Mdate2
 
 # Admin SuperUser Event Form
+CHOICES = [
+    ('value1', 'Option 1'),
+    ('value2', 'Option 2'),
+    ('value3', 'Option 3'),
+]
 class EventFormAdmin(ModelForm):
 	class Meta:
 		model = Event
@@ -69,3 +74,24 @@ class VenueForm(ModelForm):
 			'web': forms.TextInput(attrs={'class':'form-control', 'placeholder':'Web Address'}),
 			'email_address': forms.EmailInput(attrs={'class':'form-control', 'placeholder':'Email'}),
 		}
+class MyForm(ModelForm):
+    class Meta:
+        model = Mdate
+        fields = ['date_field']
+        widgets = {
+            'date_field': forms.DateInput(attrs={'type': 'date'})
+        }
+class MyForm2(ModelForm):
+    class Meta:
+        model = Mdate2
+        fields = ['month_field']
+        widgets = {
+            'month_field': forms.Select(attrs={'class':'form-select', 'placeholder':'Venue'}),
+        }
+class Search(ModelForm):
+    class Meta:
+        model = Event
+        fields = ['name']
+        widgets = {
+            'name': forms.TextInput(attrs={'class':'form-control', 'placeholder':'Event Name'}),
+        }

@@ -29,5 +29,5 @@ urlpatterns = [
 	path('admin_approval', views.admin_approval, name='admin_approval'),
 	path('venue_events/<venue_id>', views.venue_events, name='venue-events'),
 	path('show_event/<event_id>', views.show_event, name='show-event'),
-    path('pdf_download/<int:pdf_id>/', views.pdf_download, name='pdf_download'),
+    # path('pdf_download/<int:pdf_id>/', views.pdf_download, name='pdf_download'),
 ]
